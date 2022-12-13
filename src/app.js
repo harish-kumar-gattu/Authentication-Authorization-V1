@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const app = express();
 const User = require("../models/userModel");
 const registerRouter = require("../routes/register")
+const loginRouter = require("../routes/login")
+const postsRouter = require("../routes/posts")
 
 
 const port = process.env.PORT || 3000;
@@ -19,6 +21,8 @@ mongoose.connection.once('open', () => {
 mongoose.set("strictQuery", true);
 app.use(express.json())
 app.use("/register", registerRouter)
+app.use("/login", loginRouter)
+app.use("/posts", postsRouter)
 
 app.post("/user", async (req, res) => {
     try {

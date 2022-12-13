@@ -16,9 +16,7 @@ router.get("/", (req, res) => {
 router.post("/", body("name").isAlpha(), body('email').isEmail(), async (req, res) => {
     const errors = validationResult(req);
     const errObject = errors.array()[0];
-    // console.log("coming...");
     if (!errors.isEmpty()) {
-        console.log(errObject);
         return res.status(400).json({
             status: "Failed",
             message: `${errObject.msg} at ${errObject.param}`
@@ -27,9 +25,8 @@ router.post("/", body("name").isAlpha(), body('email').isEmail(), async (req, re
 
     try {
         const { name, email } = req.body
-        const user = await userModel.find({ email: email })
-        console.log(user);
-        if (user.length) {
+        const user = await userModel.findOne({ email: email })
+        if (user) {
             return res.status(400).json({
                 Status: "Failed",
                 message: "User already exists with the given email please try again"
@@ -41,7 +38,7 @@ router.post("/", body("name").isAlpha(), body('email').isEmail(), async (req, re
                     if (err) {
                         return res.json({
                             status: "Failed",
-                            Error: err
+                            Error: err.message
                         })
                     }
                     const user = await userModel.create({ name: name, email: email, password: hash });
@@ -58,7 +55,6 @@ router.post("/", body("name").isAlpha(), body('email').isEmail(), async (req, re
             }
         }
     } catch (e) {
-        // console.log("coming...");
         return res.status(400).json({
             status: "Failed",
             message: e.message
